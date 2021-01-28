@@ -1,4 +1,6 @@
-# AstroPi 2021
+ # AstroPi 2021
+
+from picamera import Picamera
 from time import sleep
 from datetime import timedelta, datetime
 import ephem
@@ -14,6 +16,10 @@ experiment_end = experiment_start + timedelta(seconds=30)
 iss = ephem.readtle(line_0, line_1, line_2)
 sun = ephem.Sun()
 
+camera = Picamera()
+camera.resolution = (2592, 1944)
+i = 0
+
 while datetime.utcnow() < experiment_end:
   iss.compute()
   
@@ -27,4 +33,6 @@ while datetime.utcnow() < experiment_end:
 
   # print(iss.sublat, iss.sublong)
   print(sun_elevation)
+
+  camera.capture(f'image{i:3d}')
   sleep(5)
