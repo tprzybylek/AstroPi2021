@@ -1,4 +1,6 @@
+*.lock
 *.csv
 
 venv/
 preprocessing/
+results/
