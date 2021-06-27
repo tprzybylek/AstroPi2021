@@ -1,5 +1,7 @@
 *.lock
 *.csv
+*.png
+*.jpg
 
 venv/
 preprocessing/

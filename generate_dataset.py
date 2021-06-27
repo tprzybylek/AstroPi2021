@@ -1,29 +1,35 @@
 from pathlib import Path
+import os
 import csv
 import numpy
+import random
+import re
 from PIL import Image
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 
 current_dir = Path(__file__).parent.absolute()
 input_dir = current_dir / 'preprocessing/stacked/'
 crop_dir = current_dir / 'preprocessing/crops/'
-output_dir_a = current_dir / 'preprocessing/learn_a'
-output_dir_m = current_dir / 'preprocessing/learn_m'
+output_dir_a = current_dir / 'preprocessing/learn/image'
+output_dir_m = current_dir / 'preprocessing/learn/mask'
 
 cropfiles_list = [f for f in crop_dir.glob('**/*') if f.is_file()]
 
 
 def crop_image(input_array, size, x_start, y_start, filename, index):
+    # if it's a rgb image
     if len(input_array.shape) == 3:
         array_extract = input_array[y_start:y_start+size,x_start:x_start+size,:]
         output_image = Image.fromarray(array_extract.astype('uint8'), 'RGB')
-        output_image.save(output_dir_a / (filename + '_' + index + '.tif'))
+        output_image.save(output_dir_a / (filename + '_' + index + '.png'))
+    # else it's a grayscale mask
     else:
         array_extract = input_array[y_start:y_start+size,x_start:x_start+size]
         output_image = Image.fromarray(array_extract.astype('uint8'), 'L')
-        output_image.save(output_dir_m / (filename + '_' + index + '.tif'))
+        output_image.save(output_dir_m / (filename + '_' + index + '.png'))
 
-
+# 
 for cropfile in cropfiles_list:
     im_filename = cropfile.name.split('.')[0]
     print(im_filename)
@@ -45,7 +51,7 @@ for cropfile in cropfiles_list:
                 im_m_array[ix,iy] = 2
             elif im_m_array[ix,iy] in [20, 30]:
                 im_m_array[ix,iy] = 3
-            elif im_m_array[ix,iy] == 60:
+            elif im_m_array[ix,iy] in [60, 100]:
                 im_m_array[ix,iy] = 4
             elif im_m_array[ix,iy] == 40:
                 im_m_array[ix,iy] = 5
@@ -53,7 +59,7 @@ for cropfile in cropfiles_list:
                 im_m_array[ix,iy] = 6
             elif im_m_array[ix,iy] == 70:
                 im_m_array[ix,iy] = 7
-            elif im_m_array[ix,iy] in [90, 100]:
+            elif im_m_array[ix,iy] == 90:
                 im_m_array[ix,iy] = 8
             elif im_m_array[ix,iy] in [80, 200]:
                 im_m_array[ix,iy] = 9
